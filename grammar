@@ -1,0 +1,114 @@
+program ::= { declaration };
+
+declaration ::=  function_declaration
+               | variable_declaration
+               | statement
+               ;
+
+statement ::=  expr_statement
+             | if_statement
+             | match_statement
+             | struct_statement
+             | block_statement
+             | while_statement
+             | for_statement
+             | loop_statement
+             | impl_statement
+             | trait_statement
+             ;
+
+expr_statement ::= expression [ ";" ];
+expression ::= literal
+             | identifier
+             | function_call
+             | unary_expression
+             | binary_expression
+             | grouping
+             ;
+
+identifier ::= letter { letter | digit | "_" }
+
+letter ::= lower_letter | upper_letter
+
+lower_letter ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h"
+               | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p"
+               | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x"
+               | "y" | "z"
+               ;
+upper_letter ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H"
+               | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P"
+               | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X"
+               | "Y" | "Z"
+               ;
+digit := "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+
+
+literal ::= number | string | boolean
+number ::= digit { digit } ;
+
+string ::= '"' { character | escape_sequence } '"'
+         | "'" { character | escape_sequence } "'"
+         ;
+escape_sequence ::= "\\" ( '"' | "'" | "\\" | "n" | "t" )
+
+boolean ::= "true" | "false" ;
+
+function_call ::= identifier "(" [ argument_list ] ")" ;
+unary_expression ::= ( "-" | "!" ) expression ;
+binary_expression ::= expression binary_operator expression ;
+binary_operator ::= "+" | "-" | "*" | "/" | "%"
+                  | "==" | "!=" | "<" | "<=" | ">"
+                  | ">=" | "&&" | "||" | "&" | "|"
+                  | "^" | "<<" | ">>" | "+=" | "-="
+                  | "*=" | "/=" | "^=" | "<<=" | ">>="
+                  | "&=" | "**"
+                  ;
+grouping ::= "(" expression ")" ;
+
+if_statement ::= "if" [ "(" ] expression [ ")" ] block_statement [ else_clause ];
+else_clause ::= "else" ( if_statement | block_statement );
+
+match_satement ::= "match" expression "{" match_arm { match_arm } "}" [ ";" ]
+match_arm ::= pattern "=>" block_statement;
+pattern ::= literal | identifier | range_pattern | tuple_pattern | struct_pattern | wildcard;
+
+struct_statement ::= "struct" identifier "{" field_list "}"
+field_list ::=  { field_declaration };
+field_declaration ::=  identifier ":" type { "," identifier ":" type } [ "," ]; 
+
+while_statement ::= "while" ( "(" expression ")" | expression ) block_statement
+                  | "while" "let" pattern "=" expression block_statement ;
+
+for_statement ::= "for" pattern "in" expression block_statement ;
+
+pattern ::= identifier | "_" | literal | tuple_pattern | array_pattern
+           | struct_pattern | enum_pattern | or_pattern
+           ;
+
+tuple_pattern ::= "(" [ pattern { "," pattern } ] ")" ;
+
+array_pattern ::= "[" [ pattern { "," pattern } ] "]" ;
+
+struct_pattern ::= identifier "{" [ field_pattern { "," field_pattern } ] "}"
+field_pattern ::= identifier ":" pattern ;
+
+enum_pattern ::= identifier "::" identifier [ "(" [ pattern { "," pattern } ] ")" ]
+
+or_pattern ::= pattern | pattern
+
+loop_statement ::= "loop" block_statement ;
+
+impl_statement ::= "impl" ( identifier | trait_impl )  "{" { function_declaration } "}" ;
+trait_impl ::= identifier "for" identifier ;
+
+trait_statement ::= "trait" identifier "{" { trait_method } "}" ;
+
+function_declaration ::= "fn" identifier "(" [ parameter_list ] ")" [ "->" type ] block_statement ;
+parameter_list ::= parameter { "," parameter } ;
+parameter ::= identifier ":" type ;
+
+variable_declaration ::= let_declaration | const_declaration ;
+let_declaration ::= "let" [ "mut" ] identifier [ ":" type ] "=" expr_statement ";" ;
+const_declaration ::= "const" identifier [ ":" type ] "=" expr_statement ;
+
+
