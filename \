@@ -1,0 +1,65 @@
+#![allow(unused)]
+use std::{ops::RangeInclusive, str::Chars};
+
+use pos::WithPos;
+use token::TokenType;
+
+mod pos;
+mod token;
+
+pub struct Token {
+    token_type: TokenType,
+    value: WithPos<String>,
+}
+
+struct Scanner<'a> {
+    input: Chars<'a>,
+    line: usize,
+    pos: usize,
+}
+
+impl<'a> Scanner<'a> {
+    pub(crate) fn bump(&mut self) -> Option<char> {
+        let v = self.input.next();
+        if v == Some('\n') {
+            self.line += 1;
+        }
+        v
+    }
+    pub fn peek(&self) -> Option<char> {
+        self.input.clone().next()
+    }
+    pub(crate) fn consume_while<F: Fn(char) -> bool>(&mut self, f: F) -> String {
+        let mut v = String::new();
+        loop {
+            match self.input.next() {
+                Some(ch) if f(ch) => {
+                    if ch == '\n' {
+                        self.line += 1;
+                    }
+                    v.push(ch);
+                    continue;
+                }
+                Some('\n') => self.line += 1,
+                _ => {}
+            }
+            break;
+        }
+        v
+    }
+    pub fn consume_identifier(&mut self) -> Option<Token> {
+        match self.peek() {
+            Some(ch) if !matches!(ch, 'a'..='z' | 'A'..='Z' | '_') => return None,
+            _ => {}
+        }
+        let line_no = self.line;
+        let start_pos = self.pos;
+        let identifier =
+            self.consume_while(|ch| matches!(ch, 'a'..='z' | 'A'..='Z' | '0'..='9' | '_'));
+        let token = Token {
+            token_type: TokenType::Identifier,
+            value: WithPos::new(identifier, pos, line),
+        };
+        Some(Token)
+    }
+}

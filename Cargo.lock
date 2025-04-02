@@ -3,9 +3,18 @@
 version = 4
 
 [[package]]
+name = "scanny"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "58ab3086d0821a1652c29a5ae75fc562d741b9be9e4cf7217aa82c6d93f0e46c"
+
+[[package]]
 name = "xts-compiler"
 version = "0.1.0"
 
 [[package]]
 name = "xts-syntax"
 version = "0.0.0"
+dependencies = [
+ "scanny",
+]
